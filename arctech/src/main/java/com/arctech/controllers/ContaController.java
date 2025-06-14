@@ -37,11 +37,6 @@ public class ContaController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<List<Conta>> searchByDescricao(@RequestParam("descricao") String descricao) {
-        return ResponseEntity.ok(contaService.searchContasByDescricao(descricao));
-    }
-
     @PutMapping("/{id}")
     public ResponseEntity<Conta> update(@PathVariable Long id, @RequestBody Conta conta) {
         try {

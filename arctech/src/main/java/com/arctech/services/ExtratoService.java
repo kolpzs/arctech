@@ -15,14 +15,10 @@ public class ExtratoService {
     private ContaService contaService;
 
     public ExtratoDto gerarExtrato(Date dataInicio, Date dataFim) {
-
         List<Conta> transacoes = contaService.findContasByPeriodo(dataInicio, dataFim);
-
         Float receitas = contaService.getTotalReceitasPorPeriodo(dataInicio, dataFim);
         Float despesas = contaService.getTotalDespesasPorPeriodo(dataInicio, dataFim);
-
         Float saldo = receitas - despesas;
-
         return new ExtratoDto(dataInicio, dataFim, receitas, despesas, saldo, transacoes);
     }
 }
