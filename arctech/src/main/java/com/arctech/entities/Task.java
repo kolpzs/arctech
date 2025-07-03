@@ -45,6 +45,10 @@ public class Task {
     @JsonIgnore
     private TaskList taskList;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "assignee_id") // Nome da nova coluna no banco de dados
+    private User assignee;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

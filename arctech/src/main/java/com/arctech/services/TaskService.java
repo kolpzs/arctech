@@ -1,13 +1,16 @@
 package com.arctech.services;
 
+import com.arctech.dto.TaskDto;
 import com.arctech.entities.Task;
 import com.arctech.entities.TaskList;
-import com.arctech.entities.TaskStatus;
 import com.arctech.entities.User;
 import com.arctech.repositories.TaskListRepository;
 import com.arctech.repositories.TaskRepository;
+import com.arctech.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,35 +21,99 @@ public class TaskService {
     private TaskRepository taskRepository;
 
     @Autowired
-    private TaskListRepository taskListRepository; // Usado para validação
+    private TaskListRepository taskListRepository;
 
-    // Lógica para criar uma tarefa
-    public Task createTask(Long taskListId, Task task, User requester) {
-        TaskList taskList = taskListRepository.findById(taskListId)
-                .orElseThrow(() -> new RuntimeException("Lista de tarefas não encontrada."));
+    @Autowired
+    private UserService userService;
 
-        // Validação: Garante que o usuário que está criando a tarefa pertence ao grupo da lista
-        if (taskList.getGroup().getMembers().stream().noneMatch(member -> member.equals(requester))) {
-            throw new RuntimeException("Usuário não tem permissão para adicionar tarefas nesta lista.");
+    @Autowired
+    private UserRepository userRepository;
+
+    @Transactional
+    public Task createTask(Long listId, TaskDto taskDto, Jwt jwt) {
+        TaskList taskList = findListAndVerifyAccess(listId, jwt);
+
+        Task newTask = new Task();
+        newTask.setTitle(taskDto.getTitle());
+        newTask.setDescription(taskDto.getDescription());
+        newTask.setDueDate(taskDto.getDueDate());
+        if (taskDto.getStatus() != null) {
+            newTask.setStatus(taskDto.getStatus());
+        }
+        newTask.setTaskList(taskList);
+
+        if (taskDto.getAssigneeId() != null) {
+            User assignee = userRepository.findById(taskDto.getAssigneeId())
+                    .orElseThrow(() -> new RuntimeException("Usuário responsável não encontrado com ID: " + taskDto.getAssigneeId()));
+
+            if (!taskList.getGroup().getMembers().contains(assignee)) {
+                throw new RuntimeException("Não é possível atribuir a tarefa a um usuário que não é membro do grupo.");
+            }
+            newTask.setAssignee(assignee);
         }
 
-        task.setTaskList(taskList);
-        return taskRepository.save(task);
+        return taskRepository.save(newTask);
     }
 
-    // Lógica para buscar as tarefas de uma lista (já ordenadas)
-    public List<Task> getTasksByList(Long taskListId) {
-        TaskList taskList = taskListRepository.findById(taskListId)
-                .orElseThrow(() -> new RuntimeException("Lista de tarefas não encontrada."));
+    @Transactional(readOnly = true)
+    public List<Task> getTasksByList(Long listId, Jwt jwt) {
+        TaskList taskList = findListAndVerifyAccess(listId, jwt); // Verificação de segurança
         return taskRepository.findByTaskListSorted(taskList);
     }
 
-    // Lógica para atualizar o status de uma tarefa
-    public Task updateTaskStatus(Long taskId, TaskStatus status) {
+    @Transactional
+    public Task updateTask(Long taskId, TaskDto taskUpdateDto, Jwt jwt) {
         Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new RuntimeException("Tarefa não encontrada."));
-        task.setStatus(status);
-        // A auditoria registrará quem e quando fez essa alteração
+                .orElseThrow(() -> new RuntimeException("Task não encontrada com ID: " + taskId));
+
+        TaskList taskList = findListAndVerifyAccess(task.getTaskList().getId(), jwt);
+
+        if (taskUpdateDto.getTitle() != null) {
+            task.setTitle(taskUpdateDto.getTitle());
+        }
+        if (taskUpdateDto.getDescription() != null) {
+            task.setDescription(taskUpdateDto.getDescription());
+        }
+        if (taskUpdateDto.getDueDate() != null) {
+            task.setDueDate(taskUpdateDto.getDueDate());
+        }
+        if (taskUpdateDto.getStatus() != null) {
+            task.setStatus(taskUpdateDto.getStatus());
+        }
+        task.setFavorited(taskUpdateDto.isFavorited());
+
+        if (taskUpdateDto.getAssigneeId() != null) {
+            User assignee = userRepository.findById(taskUpdateDto.getAssigneeId())
+                    .orElseThrow(() -> new RuntimeException("Usuário responsável não encontrado com ID: " + taskUpdateDto.getAssigneeId()));
+
+            if (!taskList.getGroup().getMembers().contains(assignee)) {
+                throw new RuntimeException("Não é possível atribuir a tarefa a um usuário que não é membro do grupo.");
+            }
+            task.setAssignee(assignee);
+        }
+
+        return taskRepository.save(task);
+    }
+
+    private TaskList findListAndVerifyAccess(Long listId, Jwt jwt) {
+        User requester = userService.findOrCreateUserFromJwt(jwt);
+
+        TaskList taskList = taskListRepository.findById(listId)
+                .orElseThrow(() -> new RuntimeException("Lista de tarefas não encontrada com ID: " + listId));
+
+        if (!taskList.getGroup().getMembers().contains(requester)) {
+            throw new RuntimeException("Acesso negado. Usuário não é membro do grupo proprietário desta lista.");
+        }
+
+        return taskList;
+    }
+
+    @Transactional
+    public Task toggleFavoriteStatus(Long taskId, Jwt jwt) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task não encontrada com ID: " + taskId));
+        findListAndVerifyAccess(task.getTaskList().getId(), jwt);
+        task.setFavorited(!task.isFavorited());
         return taskRepository.save(task);
     }
 }

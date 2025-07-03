@@ -1,20 +1,24 @@
 package com.arctech.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-@Setter
-@Getter
-@NoArgsConstructor
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "user")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "id")
+public class User implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,15 +27,15 @@ public class User {
     @Column(unique = true, nullable = false)
     private String keycloakId;
 
-    @Column(unique = true, nullable = false)
-    private String username;
+    private String name;
 
-    @ManyToMany(mappedBy = "members")
-    @JsonIgnore
-    private Set<TaskGroup> groups = new HashSet<>();
+    @Column(unique = true)
+    private String email;
 
-    public User(String keycloakId, String username) {
-        this.keycloakId = keycloakId;
-        this.username = username;
-    }
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
+
 }

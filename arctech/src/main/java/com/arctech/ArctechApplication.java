@@ -11,5 +11,4 @@ public class ArctechApplication {
     public static void main(String[] args) {
         SpringApplication.run(ArctechApplication.class, args);
     }
-
 }

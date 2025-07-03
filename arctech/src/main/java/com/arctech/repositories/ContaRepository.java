@@ -2,7 +2,7 @@ package com.arctech.repositories;
 
 import com.arctech.entities.Conta;
 import com.arctech.entities.Tipo;
-import com.arctech.entities.User; // <-- IMPORTAR
+import com.arctech.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,6 +25,6 @@ public interface ContaRepository extends JpaRepository<Conta, Long> {
     @Query("SELECT SUM(c.valor) FROM Conta c WHERE c.tipo = :tipo AND c.user = :user")
     Optional<Float> sumByTipoAndUser(@Param("tipo") Tipo tipo, @Param("user") User user);
 
-    @Query("SELECT SUM(c.valor) FROM Conta c WHERE c.tipo = :tipo AND c.data BETWEEN :dataInicio AND :dataFim AND c.user = :user")
-    Optional<Float> sumByTipoAndDataBetweenAndUser(@Param("tipo") Tipo tipo, @Param("dataInicio") Date dataInicio, @Param("dataFim") Date dataFim, @Param("user") User user);
+    //@Query("SELECT SUM(c.valor) FROM Conta c WHERE c.tipo = :tipo AND c.data BETWEEN :dataInicio AND :dataFim AND c.user = :user")
+    //Optional<Float> sumByTipoAndDataBetweenAndUser(@Param("tipo") Tipo tipo, @Param("dataInicio") Date dataInicio, @Param("dataFim") Date dataFim, @Param("user") User user);
 }

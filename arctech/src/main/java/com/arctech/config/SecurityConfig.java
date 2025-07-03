@@ -19,34 +19,26 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                // Define a sessão como STATELESS, pois usaremos tokens
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // Libera o acesso à documentação do Swagger
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        // Regras de permissão baseadas nos papéis (roles) do Keycloak
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/instituicoes", "/api/categorias").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/instituicoes/**", "/api/categorias/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/instituicoes/**", "/api/categorias/**").hasRole("ADMIN")
-                        // Qualquer usuário autenticado pode acessar o resto da API
+                        .requestMatchers("/api/users/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-                // Configura a aplicação como um Servidor de Recursos OAuth2
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt
-                                // Define o conversor customizado para ler os papéis do token
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter())
                         )
                 );
         return http.build();
     }
 
-    // Este Bean ensina o Spring Security a encontrar os papéis (roles) dentro do token JWT do Keycloak
     private JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        // Informa que os papéis estão na "claim" (campo) 'realm_access.roles' do token
         grantedAuthoritiesConverter.setAuthoritiesClaimName("realm_access");
-        // Adiciona o prefixo padrão "ROLE_" que o Spring Security usa
         grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
 
         JwtAuthenticationConverter jwtConverter = new JwtAuthenticationConverter();

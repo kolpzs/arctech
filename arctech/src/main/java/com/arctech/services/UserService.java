@@ -7,6 +7,9 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class UserService {
 
@@ -14,15 +17,24 @@ public class UserService {
     private UserRepository userRepository;
 
     @Transactional
-    public User synchronizeUser(Jwt jwt) {
-        String keycloakId = jwt.getSubject(); // O campo 'sub' é o ID do usuário no Keycloak
-        String username = jwt.getClaim("preferred_username");
+    public User findOrCreateUserFromJwt(Jwt jwt) {
+        String keycloakId = jwt.getSubject(); // O "sub" do token é o ID do usuário no Keycloak
 
-        // Procura pelo usuário no banco local. Se não encontrar, cria um novo.
-        return userRepository.findByKeycloakId(keycloakId)
-                .orElseGet(() -> {
-                    User newUser = new User(keycloakId, username);
-                    return userRepository.save(newUser);
-                });
+        Optional<User> userOptional = userRepository.findByKeycloakId(keycloakId);
+
+        if (userOptional.isPresent()) {
+            return userOptional.get();
+        } else {
+            User newUser = new User();
+            newUser.setKeycloakId(keycloakId);
+            newUser.setName(jwt.getClaimAsString("preferred_username"));
+            newUser.setEmail(jwt.getClaimAsString("email"));
+            return userRepository.save(newUser);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public List<User> findAll() {
+        return userRepository.findAll();
     }
 }

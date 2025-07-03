@@ -3,6 +3,8 @@ package com.arctech.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +14,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -28,8 +31,15 @@ public class Conta {
     private Long id;
 
     @Column(nullable = false)
-    private Date data;
+    private LocalDate dataVencimento;
 
+    private LocalDate dataPagamento;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private StatusConta status;
+
+    @NotBlank(message = "A descrição não pode ser vazia.")
     @Column(nullable = false)
     private String descricao;
 
@@ -37,6 +47,7 @@ public class Conta {
     @Column(nullable = false)
     private Float valor;
 
+    @NotNull(message = "O tipo (RECEITA, DESPESA) não pode ser nulo.")
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Tipo tipo;
@@ -45,6 +56,7 @@ public class Conta {
     @JoinColumn(name = "categoria_id")
     private Categoria categoria;
 
+    @NotNull(message = "A instituição não pode ser nula.")
     @ManyToOne
     @JoinColumn(name = "instituicao_id", nullable = false)
     private Instituicao instituicao;

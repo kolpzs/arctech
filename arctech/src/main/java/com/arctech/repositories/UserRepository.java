@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     // Busca pelo ID do Keycloak, que é o campo 'sub' no token JWT
     Optional<User> findByKeycloakId(String keycloakId);
+
+    Optional<User> findByEmail(String email);
 }
