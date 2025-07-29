@@ -1,7 +1,7 @@
 package com.arctech.reports.controllers;
 
-import com.arctech.reports.dtos.DashboardDto;
-import com.arctech.reports.dtos.SaldoPorInstituicaoDto;
+import com.arctech.reports.dto.DashboardDto;
+import com.arctech.reports.dto.SaldoPorInstituicaoDto;
 import com.arctech.reports.services.DashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

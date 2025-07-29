@@ -21,23 +21,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TransferenciaService {
 
-    @Autowired
-    private ContaRepository contaRepository;
-
-    @Autowired
-    private InstituicaoRepository instituicaoRepository;
-
-    @Autowired
-    private CategoriaRepository categoriaRepository; // Adicionar injeção
-
-    @Autowired
-    private ContaService contaService;
-
-    @Autowired
-    private UserService userService;
-
     // Constante para o nome da categoria padrão
     private static final String NOME_CATEGORIA_TRANSFERENCIA = "Transferência entre Contas";
+    @Autowired
+    private ContaRepository contaRepository;
+    @Autowired
+    private InstituicaoRepository instituicaoRepository;
+    @Autowired
+    private CategoriaRepository categoriaRepository; // Adicionar injeção
+    @Autowired
+    private ContaService contaService;
+    @Autowired
+    private UserService userService;
 
     @Transactional
     public void realizarTransferencia(TransferenciaDto dto) {

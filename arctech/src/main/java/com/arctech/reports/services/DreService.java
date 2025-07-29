@@ -5,7 +5,7 @@ import com.arctech.financial.enums.Tipo;
 import com.arctech.financial.enums.TipoCategoria;
 import com.arctech.financial.repositories.ContaRepository;
 import com.arctech.financial.services.ContaService;
-import com.arctech.reports.dtos.DreDto;
+import com.arctech.reports.dto.DreDto;
 import com.arctech.users.entities.User;
 import com.arctech.users.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -20,14 +20,12 @@ public class ContaRecorrenteController {
 
     @GetMapping
     public ResponseEntity<List<ContaRecorrenteDto>> findByUser() {
-        List<ContaRecorrenteDto> list = recorrenciaService.findByUser();
-        return ResponseEntity.ok(list);
+        return ResponseEntity.ok(recorrenciaService.findByUser());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ContaRecorrenteDto> findById(@PathVariable Long id) {
-        ContaRecorrenteDto dto = recorrenciaService.findById(id);
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(recorrenciaService.findById(id));
     }
 
     @PostMapping

@@ -22,13 +22,6 @@ public class InstituicaoController {
         return ResponseEntity.ok(instituicaoService.findAll());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Instituicao> findById(@PathVariable Long id) {
-        return instituicaoService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
     @PostMapping
     public ResponseEntity<Instituicao> create(@RequestBody Instituicao instituicao) {
         Instituicao novaInstituicao = instituicaoService.save(instituicao);
@@ -37,15 +30,22 @@ public class InstituicaoController {
         return ResponseEntity.created(uri).body(novaInstituicao);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Instituicao> update(@PathVariable Long id, @RequestBody Instituicao instituicao) {
+    @GetMapping("/find")
+    public ResponseEntity<Instituicao> findById(@RequestParam Long id) {
+        return instituicaoService.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping
+    public ResponseEntity<Instituicao> update(@RequestParam Long id, @RequestBody Instituicao instituicao) {
         instituicao.setId(id);
         Instituicao instituicaoAtualizada = instituicaoService.save(instituicao);
         return ResponseEntity.ok(instituicaoAtualizada);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    @DeleteMapping
+    public ResponseEntity<Void> delete(@RequestParam Long id) {
         try {
             instituicaoService.deleteById(id);
             return ResponseEntity.noContent().build();

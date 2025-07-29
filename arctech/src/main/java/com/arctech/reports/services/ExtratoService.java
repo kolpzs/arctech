@@ -2,7 +2,7 @@ package com.arctech.reports.services;
 
 import com.arctech.financial.entities.Conta;
 import com.arctech.financial.services.ContaService;
-import com.arctech.reports.dtos.ExtratoDto;
+import com.arctech.reports.dto.ExtratoDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

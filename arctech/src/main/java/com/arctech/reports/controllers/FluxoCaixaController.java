@@ -1,6 +1,6 @@
 package com.arctech.reports.controllers;
 
-import com.arctech.reports.dtos.FluxoCaixaDto;
+import com.arctech.reports.dto.FluxoCaixaDto;
 import com.arctech.reports.services.FluxoCaixaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;

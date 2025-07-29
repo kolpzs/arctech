@@ -22,14 +22,14 @@ public class CategoriaController {
         return ResponseEntity.ok(categoriaService.findAll());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Categoria> findById(@PathVariable Long id) {
+    @GetMapping("/findById")
+    public ResponseEntity<Categoria> findById(@RequestParam Long id) {
         return categoriaService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<Categoria> create(@RequestBody Categoria categoria) {
         Categoria novaCategoria = categoriaService.save(categoria);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
@@ -37,15 +37,15 @@ public class CategoriaController {
         return ResponseEntity.created(uri).body(novaCategoria);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Categoria> update(@PathVariable Long id, @RequestBody Categoria categoria) {
+    @PutMapping("/update")
+    public ResponseEntity<Categoria> update(@RequestParam Long id, @RequestBody Categoria categoria) {
         categoria.setId(id);
         Categoria categoriaAtualizada = categoriaService.save(categoria);
         return ResponseEntity.ok(categoriaAtualizada);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> delete(@RequestParam Long id) {
         categoriaService.deleteById(id);
         return ResponseEntity.noContent().build();
     }

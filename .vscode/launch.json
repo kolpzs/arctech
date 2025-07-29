@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-ArctechApplication<arctech>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.arctech.ArctechApplication",
+            "projectName": "arctech",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

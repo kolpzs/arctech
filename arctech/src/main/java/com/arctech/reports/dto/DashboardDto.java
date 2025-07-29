@@ -1,4 +1,4 @@
-package com.arctech.reports.dtos;
+package com.arctech.reports.dto;
 
 import com.arctech.financial.dto.ContaResponseDto;
 import lombok.Builder;
@@ -18,5 +18,6 @@ public class DashboardDto {
     private List<ContaResponseDto> proximasContasVencer;
     private List<ContaResponseDto> contasPagasMes;
     private List<ContaResponseDto> contasPendentesMes;
-
+    private Long osFinalizadasMes;
+    private Double lucroOsMes;
 }

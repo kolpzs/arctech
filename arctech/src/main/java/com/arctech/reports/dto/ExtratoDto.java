@@ -1,4 +1,4 @@
-package com.arctech.reports.dtos;
+package com.arctech.reports.dto;
 
 import com.arctech.financial.entities.Conta;
 import lombok.AllArgsConstructor;

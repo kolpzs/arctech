@@ -1,4 +1,4 @@
-package com.arctech.reports.dtos;
+package com.arctech.reports.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

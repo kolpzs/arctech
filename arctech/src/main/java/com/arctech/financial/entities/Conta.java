@@ -72,6 +72,10 @@ public class Conta {
     @JsonIgnore
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ordem_servico_id")
+    private com.arctech.os.entities.OrdemServico ordemServico;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime dataCriacao;

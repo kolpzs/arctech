@@ -5,8 +5,9 @@ import com.arctech.financial.enums.StatusConta;
 import com.arctech.financial.enums.Tipo;
 import com.arctech.financial.repositories.ContaRepository;
 import com.arctech.financial.services.ContaService;
-import com.arctech.reports.dtos.DashboardDto;
-import com.arctech.reports.dtos.SaldoPorInstituicaoDto;
+import com.arctech.reports.dto.DashboardDto;
+import com.arctech.reports.dto.RelatorioOsMensalDto;
+import com.arctech.reports.dto.SaldoPorInstituicaoDto;
 import com.arctech.users.entities.User;
 import com.arctech.users.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ public class DashboardService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private RelatorioOsService relatorioOsService;
+
     public DashboardDto getDashboardData() {
         User user = userService.findOrCreateUserFromJwt(contaService.getAuthenticatedUserAsJwt());
 
@@ -50,6 +54,7 @@ public class DashboardService {
         var proximasVencer = contaRepository.findProximasContasVencer(user, hoje)
                 .stream().map(ContaResponseDto::new).collect(Collectors.toList());
 
+        RelatorioOsMensalDto relatorioOs = relatorioOsService.gerarRelatorioMensal(hoje.getYear(), hoje.getMonthValue());
 
         return DashboardDto.builder()
                 .saldoAtual(saldoAtual)
@@ -58,6 +63,8 @@ public class DashboardService {
                 .contasPagasMes(contasPagas)
                 .contasPendentesMes(contasPendentes)
                 .proximasContasVencer(proximasVencer)
+                .osFinalizadasMes(relatorioOs.getQuantidadeOsFinalizadas())
+                .lucroOsMes(relatorioOs.getLucroTotalOs())
                 .build();
     }
 

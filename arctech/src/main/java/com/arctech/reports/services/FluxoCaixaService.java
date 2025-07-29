@@ -4,7 +4,7 @@ import com.arctech.financial.entities.Conta;
 import com.arctech.financial.enums.Tipo;
 import com.arctech.financial.repositories.ContaRepository;
 import com.arctech.financial.services.ContaService;
-import com.arctech.reports.dtos.FluxoCaixaDto;
+import com.arctech.reports.dto.FluxoCaixaDto;
 import com.arctech.users.entities.User;
 import com.arctech.users.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

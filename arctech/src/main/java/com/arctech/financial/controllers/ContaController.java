@@ -40,21 +40,22 @@ public class ContaController {
         return ResponseEntity.ok(dtos);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ContaResponseDto> findById(@PathVariable Long id) {
+    @GetMapping("/find")
+    public ResponseEntity<ContaResponseDto> findById(@RequestParam Long id) {
         return contaService.findById(id)
                 .map(conta -> ResponseEntity.ok(new ContaResponseDto(conta)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ContaResponseDto> update(@PathVariable Long id, @Valid @RequestBody ContaDto contaDto) {
+    @PutMapping
+    public ResponseEntity<ContaResponseDto> update(@RequestParam Long id, @Valid @RequestBody ContaDto contaDto) {
         Conta contaAtualizada = contaService.update(id, contaDto);
         return ResponseEntity.ok(new ContaResponseDto(contaAtualizada));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    // ALTERADO: de @PathVariable para @RequestParam
+    @DeleteMapping
+    public ResponseEntity<Void> delete(@RequestParam Long id) {
         try {
             contaService.deleteById(id);
             return ResponseEntity.noContent().build();
@@ -68,8 +69,8 @@ public class ContaController {
         return ResponseEntity.ok(contaService.getSaldoAtual());
     }
 
-    @PatchMapping("/{id}/pagar")
-    public ResponseEntity<ContaResponseDto> realizarPagamento(@PathVariable Long id) {
+    @PatchMapping("/pagar")
+    public ResponseEntity<ContaResponseDto> realizarPagamento(@RequestParam Long id) {
         Conta contaPaga = contaService.realizarPagamento(id);
         return ResponseEntity.ok(new ContaResponseDto(contaPaga));
     }

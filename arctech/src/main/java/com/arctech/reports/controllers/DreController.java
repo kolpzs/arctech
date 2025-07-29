@@ -1,6 +1,6 @@
 package com.arctech.reports.controllers;
 
-import com.arctech.reports.dtos.DreDto;
+import com.arctech.reports.dto.DreDto;
 import com.arctech.reports.services.DreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
